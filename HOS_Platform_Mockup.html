@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOS Operations Platform — Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1F3864; --navy-700:#2b4a7e; --navy-50:#eef2f9;
+    --ink:#1f2430; --muted:#6b7280; --line:#e6e9ef; --bg:#f5f6f8; --card:#ffffff;
+    --done:#00c875; --progress:#fdab3d; --stuck:#e2445c; --none:#c4c8d0; --sched:#579bfc;
+    --high:#e2445c; --med:#fdab3d; --low:#9aa2af;
+    --radius:10px; --shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    background:var(--bg);color:var(--ink);font-size:14px;-webkit-font-smoothing:antialiased}
+  .app{display:grid;grid-template-columns:248px 1fr;grid-template-rows:56px 1fr;height:100vh;
+    grid-template-areas:"brand header" "sidebar main"}
+  /* header */
+  header{grid-area:header;display:flex;align-items:center;gap:16px;background:var(--card);
+    border-bottom:1px solid var(--line);padding:0 20px}
+  .brand{grid-area:brand;display:flex;align-items:center;gap:10px;background:var(--navy);
+    color:#fff;padding:0 18px;border-right:1px solid rgba(255,255,255,.08)}
+  .logo{width:30px;height:30px;border-radius:8px;background:#fff;color:var(--navy);
+    display:grid;place-items:center;font-weight:700;font-size:12px;letter-spacing:.02em}
+  .brand b{font-weight:600;font-size:15px}
+  .brand span{font-size:11px;opacity:.7;display:block;margin-top:-2px;font-weight:400}
+  .search{flex:1;max-width:420px;position:relative}
+  .search input{width:100%;height:36px;border:1px solid var(--line);border-radius:8px;
+    padding:0 12px 0 34px;font:inherit;font-size:13px;background:var(--bg)}
+  .search input:focus{outline:2px solid var(--navy-50);border-color:var(--navy-700)}
+  .search svg{position:absolute;left:10px;top:9px;color:var(--muted)}
+  .h-spacer{flex:1}
+  .btn{height:36px;border:none;border-radius:8px;background:var(--navy);color:#fff;
+    font:inherit;font-weight:600;font-size:13px;padding:0 14px;cursor:pointer;display:flex;
+    align-items:center;gap:6px}
+  .btn:hover{background:var(--navy-700)}
+  .icon-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:var(--card);
+    display:grid;place-items:center;cursor:pointer;position:relative;color:var(--muted)}
+  .dot{position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--stuck);
+    border:2px solid #fff}
+  .me{width:34px;height:34px;border-radius:50%;background:#c65d3b;color:#fff;display:grid;
+    place-items:center;font-weight:600;font-size:12px}
+  /* sidebar */
+  aside{grid-area:sidebar;background:var(--card);border-right:1px solid var(--line);
+    padding:14px 10px;overflow-y:auto}
+  .side-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+    font-weight:600;padding:10px 10px 6px}
+  .nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;
+    cursor:pointer;color:var(--ink);font-size:13.5px}
+  .nav-item:hover{background:var(--bg)}
+  .nav-item.active{background:var(--navy-50);color:var(--navy);font-weight:600}
+  .nav-item .swatch{width:9px;height:9px;border-radius:3px;background:var(--sched);flex:none}
+  .nav-item .count{margin-left:auto;font-size:11px;color:var(--muted);background:var(--bg);
+    border-radius:20px;padding:1px 8px;font-weight:600}
+  .nav-item.active .count{background:#fff}
+  .divider{height:1px;background:var(--line);margin:10px 6px}
+  /* main */
+  main{grid-area:main;overflow-y:auto;padding:20px 24px 40px}
+  .crumb{font-size:12.5px;color:var(--muted);margin-bottom:2px}
+  .crumb b{color:var(--ink)}
+  h1{font-size:21px;font-weight:700;letter-spacing:-.01em;margin-bottom:14px}
+  .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:16px}
+  .tab{padding:9px 14px;font-size:13.5px;font-weight:500;color:var(--muted);cursor:pointer;
+    border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tab.active{color:var(--navy);border-bottom-color:var(--navy);font-weight:600}
+  .tab:hover{color:var(--ink)}
+  /* top strip: stats + ai */
+  .strip{display:grid;grid-template-columns:repeat(4,1fr) 1.6fr;gap:12px;margin-bottom:18px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:12px 14px;box-shadow:var(--shadow)}
+  .stat .n{font-size:22px;font-weight:700;line-height:1}
+  .stat .l{font-size:12px;color:var(--muted);margin-top:5px}
+  .stat .bar{margin-top:1px}
+  .stat.done .n{color:var(--done)} .stat.prog .n{color:var(--progress)}
+  .stat.over .n{color:var(--stuck)} .stat.week .n{color:var(--navy)}
+  .ai{background:linear-gradient(180deg,#fbfcff,#f4f7fd);border:1px solid #dfe7f5;
+    border-radius:var(--radius);padding:13px 15px;box-shadow:var(--shadow)}
+  .ai .head{display:flex;align-items:center;gap:7px;font-weight:600;font-size:12.5px;color:var(--navy)}
+  .ai .head .spark{width:18px;height:18px;border-radius:5px;background:var(--navy);color:#fff;
+    display:grid;place-items:center;font-size:11px}
+  .ai p{font-size:12.5px;line-height:1.5;color:#3a4353;margin-top:7px}
+  .ai .time{font-size:11px;color:var(--muted);margin-top:8px}
+  /* board */
+  .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .chip{height:32px;border:1px solid var(--line);background:var(--card);border-radius:8px;
+    padding:0 12px;font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer}
+  .chip:hover{border-color:var(--navy-700);color:var(--ink)}
+  .group{margin-bottom:16px}
+  .group-h{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;margin-bottom:6px}
+  .group-h .tick{width:10px;height:10px;border-radius:3px}
+  .group-h .g-count{font-weight:400;color:var(--muted);font-size:12.5px}
+  table{width:100%;border-collapse:separate;border-spacing:0;background:var(--card);
+    border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+  thead th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);
+    font-weight:600;text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);background:#fbfbfc}
+  tbody td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13.5px;vertical-align:middle}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr{cursor:pointer}
+  tbody tr:hover td{background:#fafbff}
+  .lead{border-left:4px solid var(--sched)}
+  .task-name{font-weight:500}
+  .flag{display:inline-block;font-size:10px;font-weight:700;color:var(--stuck);
+    border:1px solid #f3c2c9;background:#fdeef0;border-radius:5px;padding:0 5px;margin-left:6px;vertical-align:1px}
+  .owner{display:flex;align-items:center;gap:8px}
+  .av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;
+    font-size:10.5px;font-weight:600;flex:none}
+  .pill{display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:600;
+    font-size:12px;border-radius:6px;padding:4px 10px;min-width:104px}
+  .pri{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500}
+  .pri .pd{width:8px;height:8px;border-radius:50%}
+  .files{color:var(--muted);font-size:12.5px}
+  .muted{color:var(--muted)}
+  /* panels for other tabs */
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px;box-shadow:var(--shadow)}
+  .pbar-row{display:flex;align-items:center;gap:12px;margin:12px 0}
+  .pbar-row .name{width:150px;font-size:13.5px;font-weight:500}
+  .track{flex:1;height:10px;background:var(--bg);border-radius:20px;overflow:hidden}
+  .fill{height:100%;border-radius:20px}
+  .pbar-row .pct{width:44px;text-align:right;font-size:12.5px;color:var(--muted);font-weight:600}
+  .feed-item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .feed-item:last-child{border-bottom:none}
+  .feed-item .fav{flex:none}
+  .feed-item .txt{font-size:13.5px;line-height:1.45}
+  .feed-item .txt .t{color:var(--muted);font-size:12px;margin-top:2px}
+  /* drawer */
+  .scrim{position:fixed;inset:0;background:rgba(20,26,40,.35);opacity:0;pointer-events:none;
+    transition:opacity .18s}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;top:0;right:0;height:100vh;width:420px;max-width:92vw;background:#fff;
+    box-shadow:-8px 0 30px rgba(16,24,40,.16);transform:translateX(100%);transition:transform .2s ease;
+    z-index:50;display:flex;flex-direction:column}
+  .drawer.open{transform:translateX(0)}
+  .d-head{padding:18px 20px;border-bottom:1px solid var(--line)}
+  .d-head .close{float:right;cursor:pointer;color:var(--muted);font-size:20px;line-height:1}
+  .d-head h3{font-size:17px;font-weight:700;margin-right:24px}
+  .d-body{padding:18px 20px;overflow-y:auto}
+  .kv{display:grid;grid-template-columns:110px 1fr;gap:8px 12px;font-size:13px;margin-bottom:16px}
+  .kv .k{color:var(--muted)}
+  .attach{display:flex;gap:8px;margin-bottom:16px}
+  .thumb{width:60px;height:46px;border-radius:8px;background:var(--navy-50);border:1px solid var(--line);
+    display:grid;place-items:center;color:var(--navy);font-size:11px;font-weight:600}
+  .sec-title{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);
+    font-weight:600;margin:6px 0 10px}
+  .log-item{display:flex;gap:10px;padding-bottom:12px}
+  .log-item .rail{display:flex;flex-direction:column;align-items:center}
+  .log-item .rdot{width:9px;height:9px;border-radius:50%;background:var(--navy);margin-top:4px}
+  .log-item .rline{flex:1;width:2px;background:var(--line)}
+  .log-item:last-child .rline{display:none}
+  .log-item .li-txt{font-size:12.5px;line-height:1.45;padding-bottom:4px}
+  .log-item .li-txt b{font-weight:600}
+  .log-item .li-txt .ts{color:var(--muted);font-size:11.5px;display:block;margin-top:1px}
+  .hide{display:none}
+  /* mobile */
+  .m-note{display:none}
+  @media(max-width:860px){
+    .app{grid-template-columns:1fr;grid-template-rows:56px auto 1fr;
+      grid-template-areas:"brand" "header" "main"}
+    aside{display:none}
+    .brand{justify-content:center}
+    header{overflow-x:auto}
+    .strip{grid-template-columns:1fr 1fr;gap:10px}
+    .ai{grid-column:1/-1}
+    table{display:block;overflow-x:auto;white-space:nowrap}
+    .search{min-width:150px}
+    .m-note{display:block;background:#fff8e6;border:1px solid #f4e2ad;color:#7a5b12;
+      font-size:12px;padding:8px 12px;border-radius:8px;margin-bottom:14px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="brand">
+    <div class="logo">HOS</div>
+    <div><b>HOS Ops</b><span>Operations</span></div>
+  </div>
+
+  <header>
+    <div class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input placeholder="Search tasks, properties, people" aria-label="Search">
+    </div>
+    <div class="h-spacer"></div>
+    <button class="btn"><span style="font-size:16px;line-height:1">+</span> New task</button>
+    <button class="icon-btn" aria-label="Notifications">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+      <span class="dot"></span>
+    </button>
+    <div class="me">KP</div>
+  </header>
+
+  <aside>
+    <div class="side-label">Properties</div>
+    <div class="nav-item active" onclick="selProp(this,'Savannah Riverfront')"><span class="swatch" style="background:#1F3864"></span> Savannah Riverfront <span class="count">46</span></div>
+    <div class="nav-item" onclick="selProp(this,'Midtown Suites')"><span class="swatch" style="background:#00c875"></span> Midtown Suites <span class="count">31</span></div>
+    <div class="nav-item" onclick="selProp(this,'Airport Inn')"><span class="swatch" style="background:#fdab3d"></span> Airport Inn <span class="count">28</span></div>
+    <div class="nav-item" onclick="selProp(this,'Coastal Extended Stay')"><span class="swatch" style="background:#a25ddc"></span> Coastal Extended Stay <span class="count">19</span></div>
+    <div class="divider"></div>
+    <div class="side-label" id="boardsFor">Boards · Savannah Riverfront</div>
+    <div class="nav-item" onclick="selBoard(this,'Operations')">Operations</div>
+    <div class="nav-item" onclick="selBoard(this,'Housekeeping')">Housekeeping</div>
+    <div class="nav-item active" onclick="selBoard(this,'Maintenance')">Maintenance</div>
+    <div class="nav-item" onclick="selBoard(this,'Accounting')">Accounting &amp; Finance</div>
+    <div class="nav-item" onclick="selBoard(this,'Sales')">Sales &amp; Revenue</div>
+    <div class="divider"></div>
+    <div class="nav-item"><span class="swatch" style="background:var(--muted)"></span> All properties overview</div>
+    <div class="nav-item"><span class="swatch" style="background:var(--muted)"></span> Settings &amp; people</div>
+  </aside>
+
+  <main>
+    <div class="crumb"><b id="crumbProp">Savannah Riverfront</b> › <span id="crumbBoard">Maintenance</span></div>
+    <h1 id="boardTitle">Maintenance</h1>
+
+    <div class="m-note">Preview of the mobile-first layout. On a phone, staff tap a task to update status and add photos.</div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="showTab(this,'board')">Board</div>
+      <div class="tab" onclick="showTab(this,'progress')">Progress</div>
+      <div class="tab" onclick="showTab(this,'activity')">Activity</div>
+    </div>
+
+    <!-- shared strip -->
+    <div class="strip">
+      <div class="stat done"><div class="n">24</div><div class="l">Done this month</div></div>
+      <div class="stat prog"><div class="n">8</div><div class="l">In progress</div></div>
+      <div class="stat over"><div class="n">3</div><div class="l">Overdue</div></div>
+      <div class="stat week"><div class="n">11</div><div class="l">Due this week</div></div>
+      <div class="ai">
+        <div class="head"><span class="spark">✦</span> Latest at Savannah Riverfront</div>
+        <p>3 tasks are overdue, including <b>elevator inspection paperwork</b> (compliance). The HVAC filter change on floors 3–4 is stuck, waiting on parts. Generator monthly test passed today. 4 recurring tasks are scheduled over the next 6 weeks.</p>
+        <div class="time">Updated 8 min ago · AI summary</div>
+      </div>
+    </div>
+
+    <!-- BOARD TAB -->
+    <div id="board">
+      <div class="toolbar">
+        <div class="chip">☰ Group: Status</div>
+        <div class="chip">⛃ Filter</div>
+        <div class="chip">↕ Sort: Due date</div>
+        <div class="chip">+ Add task</div>
+      </div>
+
+      <div class="group">
+        <div class="group-h"><span class="tick" style="background:var(--stuck)"></span> Overdue <span class="g-count">· 3</span></div>
+        <table>
+          <thead><tr><th>Task</th><th>Owner</th><th>Status</th><th>Priority</th><th>Due</th><th>Files</th></tr></thead>
+          <tbody>
+            <tr class="lead" style="border-left-color:var(--stuck)" onclick="openTask('hvac')">
+              <td class="task-name">Replace HVAC filters — Rooms 300–340</td>
+              <td><div class="owner"><span class="av" style="background:#3f7cac">MT</span> Marcus T.</div></td>
+              <td><span class="pill" style="background:var(--stuck)">Stuck</span></td>
+              <td><span class="pri"><span class="pd" style="background:var(--high)"></span> High</span></td>
+              <td class="muted">Jul 12</td><td class="files">📎 2</td>
+            </tr>
+            <tr class="lead" style="border-left-color:var(--stuck)" onclick="openTask('pool')">
+              <td class="task-name">Pool chemical log — weekly reading</td>
+              <td><div class="owner"><span class="av" style="background:#c65d3b">DR</span> Dana R.</div></td>
+              <td><span class="pill" style="background:var(--progress)">In progress</span></td>
+              <td><span class="pri"><span class="pd" style="background:var(--high)"></span> High</span></td>
+              <td class="muted">Jul 14</td><td class="files">—</td>
+            </tr>
+            <tr class="lead" style="border-left-color:var(--stuck)" onclick="openTask('elev')">
+              <td class="task-name">Elevator inspection paperwork <span class="flag">COMPLIANCE</span></td>
+              <td><div class="owner"><span class="av" style="background:#1F3864">KP</span> Kris P.</div></td>
+              <td><span class="pill" style="background:var(--none);color:#3a3f4a">Not started</span></td>
+              <td><span class="pri"><span class="pd" style="background:var(--high)"></span> High</span></td>
+              <td class="muted">Jul 13</td><td class="files">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="group">
+        <div class="group-h"><span class="tick" style="background:var(--navy)"></span> This week <span class="g-count">· 5</span></div>
+        <table>
+          <thead><tr><th>Task</th><th>Owner</th><th>Status</th><th>Priority</th><th>Due</th><th>Files</th></tr></thead>
+          <tbody>
+            <tr class="lead" style="border-left-color:var(--navy)" onclick="openTask('fire')">
+              <td class="task-name">Fire alarm quarterly test <span class="flag">COMPLIANCE</span></td>
+              <td><div class="owner"><span class="av" style="background:#7a4fb5">PS</span> Priya S.</div></td>
+              <td><span class="pill" style="background:var(--none);color:#3a3f4a">Not started</span></td>
+              <td><span class="pri"><span class="pd" style="background:var(--high)"></span> High</span></td>
+              <td class="muted">Jul 18</td><td class="files">—</td>
+            </tr>
+            <tr class="lead" style="border-left-color:var(--navy)" onclick="openTask('faucet')">
+              <td class="task-name">Fix leaking faucet — Room 214</td>
+              <td><div class="owner"><span class="av" style="background:#3f7cac">MT</span> Marcus T.</div></td>
+              <td><span class="pill" style="background:var(--progress)">In progress</span></td>
+              <td><span class="pri"><span class="pd" style="background:var(--med)"></span> Medium</span></td>
+              <td class="muted">Jul 16</td><td class="files">📎 1</td>
+            </tr>
+            <tr class="lead" style="border-left-color:var(--navy)" onclick="openTask('gen')">
+              <td class="task-name">Generator monthly load test</td>
+              <td><div class="owner"><span class="av" style="background:#3f7cac">MT</span> Marcus T.</div></td>
+              <td><span class="pill" style="background:var(--done)">Done</span></td>
+              <td><span class="pri"><span class="pd" style="background:var(--med)"></span> Medium</span></td>
+              <td class="muted">Jul 16</td><td class="files">📎 1</td>
+            </tr>
+            <tr class="lead" style="border-left-color:var(--navy)" onclick="openTask('amen')">
+              <td class="task-name">Restock guest amenities — floors 2–4</td>
+              <td><div class="owner"><span class="av" style="background:#c65d3b">DR</span> Dana R.</div></td>
+              <td><span class="pill" style="background:var(--progress)">In progress</span></td>
+              <td><span class="pri"><span class="pd" style="background:var(--low)"></span> Low</span></td>
+              <td class="muted">Jul 17</td><td class="files">—</td>
+            </tr>
+            <tr class="lead" style="border-left-color:var(--navy)" onclick="openTask('lobby')">
+              <td class="task-name">Lobby deep clean</td>
+              <td><div class="owner"><span class="av" style="background:#2f9e6f">HK</span> Housekeeping</div></td>
+              <td><span class="pill" style="background:var(--none);color:#3a3f4a">Not started</span></td>
+              <td><span class="pri"><span class="pd" style="background:var(--low)"></span> Low</span></td>
+              <td class="muted">Jul 17</td><td class="files">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="group">
+        <div class="group-h"><span class="tick" style="background:var(--sched)"></span> Recurring — auto-generated <span class="g-count">· 4</span></div>
+        <table>
+          <thead><tr><th>Task</th><th>Owner</th><th>Status</th><th>Repeats</th><th>Next due</th><th>Files</th></tr></thead>
+          <tbody>
+            <tr class="lead" onclick="openTask('rhvac')">
+              <td class="task-name">HVAC filter change</td>
+              <td><div class="owner"><span class="av" style="background:#8a94a6">⟳</span> Auto-assign</div></td>
+              <td><span class="pill" style="background:var(--sched)">Scheduled</span></td>
+              <td class="muted">Every 60 days</td><td class="muted">Sep 12</td><td class="files">—</td>
+            </tr>
+            <tr class="lead" onclick="openTask('pest')">
+              <td class="task-name">Pest control service</td>
+              <td><div class="owner"><span class="av" style="background:#8a94a6">⟳</span> Auto-assign</div></td>
+              <td><span class="pill" style="background:var(--sched)">Scheduled</span></td>
+              <td class="muted">Monthly</td><td class="muted">Aug 1</td><td class="files">—</td>
+            </tr>
+            <tr class="lead" onclick="openTask('ext')">
+              <td class="task-name">Fire extinguisher check <span class="flag">COMPLIANCE</span></td>
+              <td><div class="owner"><span class="av" style="background:#8a94a6">⟳</span> Auto-assign</div></td>
+              <td><span class="pill" style="background:var(--sched)">Scheduled</span></td>
+              <td class="muted">Monthly</td><td class="muted">Aug 5</td><td class="files">—</td>
+            </tr>
+            <tr class="lead" onclick="openTask('audit')">
+              <td class="task-name">Brand quality audit prep</td>
+              <td><div class="owner"><span class="av" style="background:#8a94a6">⟳</span> Auto-assign</div></td>
+              <td><span class="pill" style="background:var(--sched)">Scheduled</span></td>
+              <td class="muted">Quarterly</td><td class="muted">Sep 30</td><td class="files">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PROGRESS TAB -->
+    <div id="progress" class="hide">
+      <div class="panel">
+        <div class="sec-title">Completion by department · Savannah Riverfront</div>
+        <div class="pbar-row"><div class="name">Operations</div><div class="track"><div class="fill" style="width:82%;background:var(--done)"></div></div><div class="pct">82%</div></div>
+        <div class="pbar-row"><div class="name">Housekeeping</div><div class="track"><div class="fill" style="width:91%;background:var(--done)"></div></div><div class="pct">91%</div></div>
+        <div class="pbar-row"><div class="name">Maintenance</div><div class="track"><div class="fill" style="width:68%;background:var(--progress)"></div></div><div class="pct">68%</div></div>
+        <div class="pbar-row"><div class="name">Accounting</div><div class="track"><div class="fill" style="width:74%;background:var(--progress)"></div></div><div class="pct">74%</div></div>
+        <div class="pbar-row"><div class="name">Sales &amp; Revenue</div><div class="track"><div class="fill" style="width:58%;background:var(--stuck)"></div></div><div class="pct">58%</div></div>
+      </div>
+      <div class="panel" style="margin-top:14px">
+        <div class="sec-title">Completion across all properties</div>
+        <div class="pbar-row"><div class="name">Savannah Riverfront</div><div class="track"><div class="fill" style="width:75%;background:var(--navy)"></div></div><div class="pct">75%</div></div>
+        <div class="pbar-row"><div class="name">Midtown Suites</div><div class="track"><div class="fill" style="width:88%;background:var(--navy)"></div></div><div class="pct">88%</div></div>
+        <div class="pbar-row"><div class="name">Airport Inn</div><div class="track"><div class="fill" style="width:64%;background:var(--navy)"></div></div><div class="pct">64%</div></div>
+        <div class="pbar-row"><div class="name">Coastal Extended Stay</div><div class="track"><div class="fill" style="width:79%;background:var(--navy)"></div></div><div class="pct">79%</div></div>
+      </div>
+    </div>
+
+    <!-- ACTIVITY TAB -->
+    <div id="activity" class="hide">
+      <div class="panel">
+        <div class="sec-title">Recent activity · this is the record the AI summarizes</div>
+        <div class="feed-item"><span class="av fav" style="background:#3f7cac">MT</span><div class="txt"><b>Marcus T.</b> completed <b>Generator monthly load test</b> and added a photo.<div class="t">Today, 9:41 AM</div></div></div>
+        <div class="feed-item"><span class="av fav" style="background:#c65d3b">DR</span><div class="txt"><b>Dana R.</b> moved <b>Pool chemical log</b> to In progress.<div class="t">Today, 8:15 AM</div></div></div>
+        <div class="feed-item"><span class="av fav" style="background:#8a94a6">⟳</span><div class="txt">System auto-generated <b>HVAC filter change</b> for Sep 12 (recurs every 60 days).<div class="t">Today, 6:00 AM</div></div></div>
+        <div class="feed-item"><span class="av fav" style="background:#3f7cac">MT</span><div class="txt"><b>Marcus T.</b> flagged <b>Replace HVAC filters — Rooms 300–340</b> as Stuck: "waiting on filter delivery."<div class="t">Yesterday, 4:22 PM</div></div></div>
+        <div class="feed-item"><span class="av fav" style="background:#1F3864">KP</span><div class="txt"><b>Kris P.</b> assigned <b>Elevator inspection paperwork</b> to himself.<div class="t">Yesterday, 2:03 PM</div></div></div>
+        <div class="feed-item"><span class="av fav" style="background:#7a4fb5">PS</span><div class="txt"><b>Priya S.</b> created <b>Fire alarm quarterly test</b>, due Jul 18.<div class="t">Yesterday, 11:30 AM</div></div></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Task detail drawer -->
+<div class="scrim" id="scrim" onclick="closeTask()"></div>
+<div class="drawer" id="drawer" role="dialog" aria-label="Task details">
+  <div class="d-head">
+    <span class="close" onclick="closeTask()" aria-label="Close">✕</span>
+    <h3 id="dTitle">Task</h3>
+  </div>
+  <div class="d-body">
+    <div class="kv">
+      <div class="k">Status</div><div><span class="pill" id="dStatus" style="background:var(--stuck);min-width:0;padding:3px 10px">Stuck</span></div>
+      <div class="k">Owner</div><div id="dOwner">Marcus T.</div>
+      <div class="k">Manager</div><div>Kris Patel</div>
+      <div class="k">Priority</div><div id="dPri">High</div>
+      <div class="k">Due date</div><div id="dDue">Jul 12, 2026</div>
+      <div class="k">Property</div><div>Savannah Riverfront · Maintenance</div>
+    </div>
+    <div class="sec-title">Attachments</div>
+    <div class="attach">
+      <div class="thumb">📷 IMG</div><div class="thumb">📄 PDF</div>
+    </div>
+    <div class="sec-title">Activity log</div>
+    <div id="dLog">
+      <div class="log-item"><div class="rail"><div class="rdot"></div><div class="rline"></div></div><div class="li-txt"><b>Marcus T.</b> set status to Stuck — "waiting on filter delivery."<span class="ts">Yesterday, 4:22 PM</span></div></div>
+      <div class="log-item"><div class="rail"><div class="rdot"></div><div class="rline"></div></div><div class="li-txt"><b>Marcus T.</b> added photo IMG_2231.jpg<span class="ts">Jul 12, 1:10 PM</span></div></div>
+      <div class="log-item"><div class="rail"><div class="rdot"></div><div class="rline"></div></div><div class="li-txt"><b>Kris P.</b> set priority to High<span class="ts">Jul 11, 9:02 AM</span></div></div>
+      <div class="log-item"><div class="rail"><div class="rdot"></div><div class="rline"></div></div><div class="li-txt">Task created and assigned to Marcus T.<span class="ts">Jul 10, 3:44 PM</span></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const tasks = {
+    hvac:{t:"Replace HVAC filters — Rooms 300–340",s:"Stuck",sc:"var(--stuck)",o:"Marcus T.",p:"High",d:"Jul 12, 2026"},
+    pool:{t:"Pool chemical log — weekly reading",s:"In progress",sc:"var(--progress)",o:"Dana R.",p:"High",d:"Jul 14, 2026"},
+    elev:{t:"Elevator inspection paperwork",s:"Not started",sc:"var(--none)",o:"Kris P.",p:"High",d:"Jul 13, 2026"},
+    fire:{t:"Fire alarm quarterly test",s:"Not started",sc:"var(--none)",o:"Priya S.",p:"High",d:"Jul 18, 2026"},
+    faucet:{t:"Fix leaking faucet — Room 214",s:"In progress",sc:"var(--progress)",o:"Marcus T.",p:"Medium",d:"Jul 16, 2026"},
+    gen:{t:"Generator monthly load test",s:"Done",sc:"var(--done)",o:"Marcus T.",p:"Medium",d:"Jul 16, 2026"},
+    amen:{t:"Restock guest amenities — floors 2–4",s:"In progress",sc:"var(--progress)",o:"Dana R.",p:"Low",d:"Jul 17, 2026"},
+    lobby:{t:"Lobby deep clean",s:"Not started",sc:"var(--none)",o:"Housekeeping",p:"Low",d:"Jul 17, 2026"},
+    rhvac:{t:"HVAC filter change (recurring)",s:"Scheduled",sc:"var(--sched)",o:"Auto-assign",p:"—",d:"Sep 12, 2026"},
+    pest:{t:"Pest control service (recurring)",s:"Scheduled",sc:"var(--sched)",o:"Auto-assign",p:"—",d:"Aug 1, 2026"},
+    ext:{t:"Fire extinguisher check (recurring)",s:"Scheduled",sc:"var(--sched)",o:"Auto-assign",p:"—",d:"Aug 5, 2026"},
+    audit:{t:"Brand quality audit prep (recurring)",s:"Scheduled",sc:"var(--sched)",o:"Auto-assign",p:"—",d:"Sep 30, 2026"}
+  };
+  function openTask(id){
+    const x=tasks[id]; if(!x) return;
+    document.getElementById('dTitle').textContent=x.t;
+    const st=document.getElementById('dStatus'); st.textContent=x.s; st.style.background=x.sc;
+    st.style.color=(x.s==='Not started')?'#3a3f4a':'#fff';
+    document.getElementById('dOwner').textContent=x.o;
+    document.getElementById('dPri').textContent=x.p;
+    document.getElementById('dDue').textContent=x.d;
+    document.getElementById('drawer').classList.add('open');
+    document.getElementById('scrim').classList.add('open');
+  }
+  function closeTask(){
+    document.getElementById('drawer').classList.remove('open');
+    document.getElementById('scrim').classList.remove('open');
+  }
+  function showTab(el,id){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    ['board','progress','activity'].forEach(x=>document.getElementById(x).classList.add('hide'));
+    document.getElementById(id).classList.remove('hide');
+  }
+  function selProp(el,name){
+    document.querySelectorAll('aside .nav-item').forEach(n=>{ if(n.querySelector('.swatch') && n.parentNode) {} });
+    el.parentNode.querySelectorAll('.nav-item').forEach(n=>{});
+    document.querySelectorAll('aside .side-label ~ .nav-item').forEach(()=>{});
+    // simple active toggle among property items (first group)
+    const props=el.parentNode;
+    // clear only property items (those before first divider)
+    let n=el.parentNode.querySelector('.side-label'); 
+    document.querySelectorAll('aside .nav-item').forEach(x=>{});
+    el.parentNode.querySelectorAll('.nav-item').forEach(()=>{});
+    // straightforward: remove active from siblings sharing onclick selProp
+    document.querySelectorAll('[onclick^="selProp"]').forEach(x=>x.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('crumbProp').textContent=name;
+    document.getElementById('boardsFor').textContent='Boards · '+name;
+  }
+  function selBoard(el,name){
+    document.querySelectorAll('[onclick^="selBoard"]').forEach(x=>x.classList.remove('active'));
+    el.classList.add('active');
+    const label = name==='Accounting'?'Accounting & Finance':(name==='Sales'?'Sales & Revenue':name);
+    document.getElementById('crumbBoard').textContent=label;
+    document.getElementById('boardTitle').textContent=label;
+  }
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeTask(); });
+</script>
+</body>
+</html>
